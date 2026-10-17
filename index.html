@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Claquette Atelier — claquette numérique, timecode et journal des prises</title>
+<meta name="description" content="Claquette numérique (slate) pour cinéastes et vidéastes : timecode à la bonne cadence (drop-frame), clap flash + bip, journal des prises CSV/JSON, amorce de décompte 2-pop en WebM. Gratuit, MIT, hors ligne.">
+<meta name="theme-color" content="#0f1115">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon.svg">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<a class="skip" href="#main" data-i18n="tabSlate">Claquette</a>
+<header class="top">
+  <div class="brand"><img src="icons/icon.svg" alt="" width="34" height="34"><div><h1 data-i18n="title">Claquette Atelier</h1><p data-i18n="tagline"></p></div></div>
+  <nav class="lang" aria-label="Langue / Language / Tutlayt">
+    <button type="button" data-lang="fr" lang="fr">FR</button><button type="button" data-lang="en" lang="en">EN</button><button type="button" data-lang="kab" lang="kab" title="Taqbaylit">KAB</button>
+  </nav>
+</header>
+
+<nav class="tabs" role="tablist">
+  <button type="button" role="tab" id="tab-slate" aria-controls="view-slate" data-view="slate" data-i18n="tabSlate"></button>
+  <button type="button" role="tab" id="tab-log" aria-controls="view-log" data-view="log"><span data-i18n="tabLog"></span> <span class="badge" id="logBadge">0</span></button>
+  <button type="button" role="tab" id="tab-leader" aria-controls="view-leader" data-view="leader" data-i18n="tabLeader"></button>
+</nav>
+
+<main id="main">
+  <!-- ===== Slate ===== -->
+  <section id="view-slate" class="view" role="tabpanel" aria-labelledby="tab-slate">
+    <div id="board" class="board">
+      <button type="button" class="fsclose" id="fsClose" data-i18n-label="exitFullscreen">✕</button>
+      <div class="sticks" aria-hidden="true"><div class="stick top" id="stickTop"></div><div class="stick bottom"></div></div>
+      <div class="tcbox" id="tcbox" title="CLAP">
+        <output id="tc" class="tc" aria-live="off">00:00:00:00</output>
+        <div class="tcinfo"><span id="tcInfo"></span><span id="lastClap" class="last"></span></div>
+      </div>
+      <div class="fields">
+        <label class="f prod"><span data-i18n="production"></span><input id="f-production" data-field="production" autocomplete="off" data-i18n-ph="prodPh"></label>
+        <label class="f w2"><span data-i18n="director"></span><input id="f-director" data-field="director" autocomplete="off"></label>
+        <label class="f w2"><span data-i18n="camera"></span><input id="f-camera" data-field="camera" autocomplete="off"></label>
+        <label class="f big"><span data-i18n="scene"></span><input id="f-scene" data-field="scene" autocomplete="off" inputmode="text"></label>
+        <label class="f big"><span data-i18n="shot"></span><input id="f-shot" data-field="shot" autocomplete="off"></label>
+        <div class="f big take"><label for="f-take" data-i18n="take"></label>
+          <div class="stepper"><button type="button" id="takeMinus" data-i18n-label="minus">−</button><input id="f-take" data-field="take" autocomplete="off" inputmode="numeric"><button type="button" id="takePlus" data-i18n-label="plus">+</button></div></div>
+        <label class="f"><span data-i18n="roll"></span><input id="f-roll" data-field="roll" autocomplete="off"></label>
+        <label class="f"><span data-i18n="date"></span><input id="f-date" data-field="date" type="date"></label>
+        <label class="f"><span data-i18n="fps"></span><select id="f-fps" data-field="fps"></select></label>
+        <label class="f"><span data-i18n="intExt"></span><select id="f-intExt" data-field="intExt"><option value="INT" data-i18n="int"></option><option value="EXT" data-i18n="ext"></option><option value="INT/EXT" data-i18n="intext"></option></select></label>
+        <label class="f"><span data-i18n="dayNight"></span><select id="f-dayNight" data-field="dayNight"><option value="DAY" data-i18n="day"></option><option value="NIGHT" data-i18n="night"></option></select></label>
+        <label class="f"><span data-i18n="sound"></span><select id="f-sound" data-field="sound"><option value="SYNC" data-i18n="sync"></option><option value="MOS" data-i18n="mos"></option></select></label>
+        <label class="f wide"><span data-i18n="notes"></span><input id="f-notes" data-field="notes" autocomplete="off" data-i18n-ph="notesPh"></label>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button type="button" id="clap" class="clap" aria-describedby="clapHint"><span data-i18n="clap">CLAP</span></button>
+      <p id="clapHint" class="hint" data-i18n="clapHint"></p>
+      <div class="row">
+        <button type="button" id="fs" data-i18n="fullscreen"></button>
+        <label class="chk"><input type="checkbox" id="wake"> <span data-i18n="wake"></span></label>
+        <label class="chk"><input type="checkbox" id="countdown"> <span data-i18n="countdown"></span></label>
+        <label class="chk"><input type="checkbox" id="autoinc" checked> <span data-i18n="autoinc"></span></label>
+        <label class="inline"><span data-i18n="flashFrames"></span> <select id="flashFrames"><option>1</option><option>2</option><option selected>3</option><option>4</option><option>6</option></select> <span data-i18n="frames"></span></label>
+      </div>
+      <fieldset class="row tcsrc">
+        <legend data-i18n="tcSource"></legend>
+        <label class="chk"><input type="radio" name="tcMode" value="tod" checked> <span data-i18n="tcTod"></span></label>
+        <label class="chk"><input type="radio" name="tcMode" value="jam"> <span data-i18n="tcJam"></span></label>
+        <label class="inline"><span data-i18n="tcStart"></span> <input id="tcStart" value="01:00:00:00" size="11" spellcheck="false" autocomplete="off"></label>
+        <button type="button" id="jam" data-i18n="jam"></button>
+      </fieldset>
+      <p class="small" data-i18n="tips"></p>
+    </div>
+  </section>
+
+  <!-- ===== Take log ===== -->
+  <section id="view-log" class="view" role="tabpanel" aria-labelledby="tab-log" hidden>
+    <div class="loghead">
+      <h2><span data-i18n="logTitle"></span> · <span id="takesCount"></span></h2>
+      <div class="row">
+        <button type="button" id="expCsv" data-i18n="exportCsv"></button>
+        <button type="button" id="expJson" data-i18n="exportJson"></button>
+        <button type="button" id="clearLog" class="danger" data-i18n="clearLog"></button>
+      </div>
+    </div>
+    <p id="emptyLog" class="small" data-i18n="empty"></p>
+    <ol id="takes" class="takes" reversed></ol>
+  </section>
+
+  <!-- ===== Countdown leader ===== -->
+  <section id="view-leader" class="view" role="tabpanel" aria-labelledby="tab-leader" hidden>
+    <p data-i18n="leaderIntro"></p>
+    <canvas id="leader" width="1280" height="720" role="img" aria-label="Countdown leader"></canvas>
+    <div class="row">
+      <label class="inline"><span data-i18n="leaderFps"></span> <select id="leaderFps"></select></label>
+      <label class="inline"><span data-i18n="resolution"></span> <select id="leaderRes"><option value="1280x720">1280×720</option><option value="1920x1080">1920×1080</option><option value="1080x1920">1080×1920</option></select></label>
+      <label class="inline"><span data-i18n="leaderText"></span> <input id="leaderText" size="18" autocomplete="off"></label>
+    </div>
+    <div class="row">
+      <button type="button" id="leaderPlay" class="primary" data-i18n="preview"></button>
+      <button type="button" id="leaderWebm" data-i18n="exportWebm"></button>
+      <button type="button" id="slatePng" data-i18n="slatePng"></button>
+    </div>
+    <p id="leaderStatus" class="small" role="status"></p>
+  </section>
+  <p class="small privacy"><span data-i18n="privacy"></span> <span id="offline" hidden>· <span data-i18n="offlineReady"></span></span></p>
+</main>
+
+<div id="flash" class="flash" hidden></div>
+<div id="count" class="count" aria-hidden="true" hidden></div>
+<div id="live" class="sr" role="status" aria-live="polite"></div>
+<footer>MIT © 2026 salimadour31-boop · <a href="https://github.com/salimadour31-boop/claquette-atelier">GitHub</a></footer>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

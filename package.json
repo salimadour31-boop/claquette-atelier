@@ -1,0 +1,12 @@
+{
+  "name": "claquette-atelier",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Claquette numérique, timecode et journal des prises dans le navigateur — digital clapperboard, timecode and take log in the browser.",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/slate.test.js",
+    "e2e": "node tests/e2e.mjs"
+  }
+}

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Claquette Atelier icon: a clapperboard with an open striped stick and a red timecode LED bar -->
+  <rect width="64" height="64" rx="14" fill="#0f1115"/>
+  <defs><clipPath id="s"><rect x="0" y="0" width="44" height="9" rx="1.5"/></clipPath></defs>
+  <g transform="translate(10 18) rotate(-16)">
+    <rect x="0" y="0" width="44" height="9" rx="1.5" fill="#fdfdf8"/>
+    <g clip-path="url(#s)" fill="#0f1115"><path d="M6 0h7l-6 9H0zM20 0h7l-6 9h-7zM34 0h7l-6 9h-7z"/></g>
+  </g>
+  <rect x="10" y="22" width="44" height="9" rx="1.5" fill="#fdfdf8"/>
+  <path d="M16 22h7l-6 9h-7zM30 22h7l-6 9h-7zM44 22h7l-6 9h-7z" fill="#0f1115"/>
+  <rect x="10" y="31" width="44" height="23" rx="3" fill="#050506" stroke="#fdfdf8" stroke-width="2"/>
+  <rect x="15" y="36" width="34" height="7" rx="2" fill="#ff4b3e"/>
+  <rect x="15" y="46" width="10" height="4" rx="1" fill="#ffcf3f"/><rect x="27" y="46" width="10" height="4" rx="1" fill="#fdfdf8" opacity=".7"/><rect x="39" y="46" width="10" height="4" rx="1" fill="#fdfdf8" opacity=".7"/>
+</svg>

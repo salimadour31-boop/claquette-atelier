@@ -1,0 +1,23 @@
+# Unit tests (Node, node:test) and end-to-end test in a real browser (Playwright Chromium).
+name: ci
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Unit tests (timecode, drop-frame, CSV, leader schedule)
+        run: npm test
+      - name: Install Playwright Chromium
+        run: |
+          npm install --no-save playwright@1.48.2
+          npx playwright install --with-deps chromium
+      - name: End-to-end test (languages, CLAP, take log, CSV, WebM leader, mobile layout)
+        run: node tests/e2e.mjs
